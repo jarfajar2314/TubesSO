@@ -37,7 +37,7 @@ char getch_(int echo);
 char getch(void);
 char getche(void);
 
-void *getInput(void *vargp);
-void *drawArea(void *vargp);
+void *getInput(void *vargp); // Input from User
+void *drawArea(void *vargp); // Draw area
 int msleep(long msec);
-void move();
+void move(); // Move User Character
