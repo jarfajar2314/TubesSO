@@ -1,7 +1,10 @@
 #include "header.h"
 int main(int argc, char *argv[]){
+    // Inisialisasi Global Variable
     input = 'X';
     pos = MAXWIDTH/2;
+    
+    // Create and Join Thread
     int tid;
     pthread_t userControl;
     pthread_t draw;
