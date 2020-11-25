@@ -26,11 +26,11 @@
 #define K_LEFT 97
 #define K_RIGHT 100
 
-static struct termios old, current;
 char input;
 int pos;
 
 // Create getch func
+static struct termios old, current;
 void initTermios(int echo) ;
 void resetTermios(void);
 char getch_(int echo);
