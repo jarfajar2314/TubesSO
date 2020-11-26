@@ -31,6 +31,7 @@
 #define K_LEFT 97
 #define K_RIGHT 100
 #define K_SPACE 32
+#define PLAYER 202
 
 char input;
 int playerPos;
