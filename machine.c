@@ -1,5 +1,6 @@
 #include "header.h"
 
+// ((((( BUAT GETCH)))))
 /* Initialize new terminal i/o settings */
 void initTermios(int echo) 
 {
@@ -41,7 +42,9 @@ char getche(void)
 {
   return getch_(1);
 }
+// =================
 
+// Read Keyboard input
 void *getInput(void *vargp)
 {
     clearScreen();
@@ -49,9 +52,9 @@ void *getInput(void *vargp)
     char c;
     while(PLAYING)
     {
-        printf("\e[?25l");
+        printf("\e[?25l"); // Remove Cursor
         input = getch();
-        move();
+        control();
         // printf("\nTyped:%c | %d\n", input, input);
         // fflush(stdout);
         if(input == 'q') break;
@@ -59,12 +62,59 @@ void *getInput(void *vargp)
     pthread_exit(NULL);
 }
 
-void move()
+void control()
 {
-    if(((input == K_LEFT) || (input == ARROW_LEFT)) && (pos != 1)) pos--;
-    if(((input == K_RIGHT) || (input == ARROW_RIGHT)) && (pos != MAXWIDTH-2)) pos++;
+    // Player Move
+    if(((input == K_LEFT) || (input == ARROW_LEFT)) && (playerPos != 1)) playerPos--;
+    if(((input == K_RIGHT) || (input == ARROW_RIGHT)) && (playerPos != MAXWIDTH-2)) playerPos++;
+
+    // Player Shooting
+    if(input == K_SPACE)shoot(SPAWN);
 }
 
+void shoot(int mode)
+{
+    if(mode == SPAWN)
+    {
+        // Inisiasi
+        currentBullet++;
+        if(currentBullet == MAXBULLETS) currentBullet = 0; // MAX Bullet
+        bullets[currentBullet].posX = playerPos;
+        bullets[currentBullet].posY = MAXHEIGHT-3;
+        bullets[currentBullet].show = 1;
+    }
+    else if(mode == MOVE){
+        // Bullets moving
+        for(int i = 0; i < MAXBULLETS; i++){
+            if(bullets[i].show == 1) bullets[i].posY -= BULLET_SPEED;
+        }
+    }
+}
+
+void update()
+{
+    shoot(MOVE);
+    // If Bullet reach end of windows
+    if(bullets[currentBullet].posY == 0 && bullets[currentBullet].show == 1)
+    {
+        bullets[currentBullet].show = 0;
+    }
+}
+
+// Cek jika ada bullet di koordinat x, y
+int checkBullet(int x, int y)
+{
+    int check = 0;
+    for(int i = 0; i < MAXBULLETS; i++){
+        if(bullets[i].posX == x && bullets[i].posY == y && bullets[i].show == 1){
+            check = 1;
+            break;
+        }
+    }
+    return check;
+}
+
+// Print area / windows
 void *drawArea(void *vargp)
 {
     while(PLAYING)
@@ -91,12 +141,22 @@ void *drawArea(void *vargp)
                 }
                 else
                 {
-                    if(i == MAXHEIGHT-2 && (j == pos))
+                    // Print Bullet
+                    if(checkBullet(j, i) == 1)
+                    {
+                        RED(0);
+                        printf("|");
+                        RESETCOLOR();
+                    } 
+                    // Print Player
+                    else if(i == MAXHEIGHT-2 && (j == playerPos))
                     {
                         CYAN(0);
                         printf("A");
+                        // printf("%d", input);
                         RESETCOLOR();
                     }
+                    // Print blank space
                     else printf(" ");
                     fflush(stdout);
                 }
@@ -104,10 +164,20 @@ void *drawArea(void *vargp)
             printf("\n");
             fflush(stdout);
         }
+        // for debugging
+        printf("FPS:%d | PPos:%d | cBullet:%d [%d,%d]%d\n", FPS, playerPos, currentBullet, bullets[currentBullet].posX, bullets[currentBullet].posY, bullets[currentBullet].show);
+        // ==============
         if(input == 'q')break;
-        msleep(100);
+        update();
+        fps(FPS);
     }
     pthread_exit(NULL);
+}
+
+void fps(int frame)
+{
+    int f = 1000/frame;
+    msleep(f);
 }
 
 // Sleep in Milisecond

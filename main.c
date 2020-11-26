@@ -1,8 +1,14 @@
 #include "header.h"
 int main(int argc, char *argv[]){
+    /*
+        A / < dan D / > untuk gerak
+        Q untuk quit
+        SPACE untuk shoot
+    */
     // Inisialisasi Global Variable
     input = 'X';
-    pos = MAXWIDTH/2;
+    playerPos = MAXWIDTH/2;
+    currentBullet = -1;
     
     // Create and Join Thread
     int tid;
@@ -10,7 +16,7 @@ int main(int argc, char *argv[]){
     pthread_t draw;
     pthread_create(&userControl, NULL, getInput, NULL);
     pthread_create(&draw, NULL, drawArea, NULL);
-    pthread_join(userControl, NULL);
-    pthread_join(draw, NULL);
+    pthread_join(userControl, NULL); // Start control thread
+    pthread_join(draw, NULL); // Start draw area thread
     return 0;
 }
