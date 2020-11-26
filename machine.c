@@ -48,11 +48,11 @@ char getche(void)
 void *getInput(void *vargp)
 {
     clearScreen();
-    printf("Start\n");
+    // printf("Start\n");
     char c;
     while(PLAYING)
     {
-        printf("\e[?25l"); // Remove Cursor
+        // printf("\e[?25l"); // Remove Cursor
         input = getch();
         control();
         // printf("\nTyped:%c | %d\n", input, input);
@@ -126,17 +126,21 @@ void *drawArea(void *vargp)
             {
                 if((i == 0 && j == 0) || (i == 0 && j == MAXWIDTH-1) || (i == MAXHEIGHT-1 && j == 0) || (i == MAXHEIGHT-1 && j == MAXWIDTH-1))
                 {
-                    printf("+");
+                    if(i == j && i == 0) printf("\u2554");
+                    else if(i == 0 && j == MAXWIDTH-1) printf("\u2557");
+                    else if(j == 0 && i == MAXHEIGHT-1) printf("\u255A");
+                    else printf("\u255D");
+                    // printf("+");
                     fflush(stdout);
                 }
                 else if(i == 0 || i == MAXHEIGHT-1)
                 {
-                    printf("-");
+                    printf("\u2550");
                     fflush(stdout);
                 }
                 else if((i > 0 && i < MAXHEIGHT-1) && (j == 0 || j == MAXWIDTH-1))
                 {
-                    printf("|");
+                    printf("\u2551");
                     fflush(stdout);
                 }
                 else
@@ -144,7 +148,7 @@ void *drawArea(void *vargp)
                     // Print Bullet
                     if(checkBullet(j, i) == 1)
                     {
-                        RED(0);
+                        YELLOW(0);
                         printf("|");
                         RESETCOLOR();
                     } 
@@ -152,7 +156,8 @@ void *drawArea(void *vargp)
                     else if(i == MAXHEIGHT-2 && (j == playerPos))
                     {
                         CYAN(0);
-                        printf("A");
+                        printf("\u0394");
+                        // printf("\u23F0");
                         // printf("%d", input);
                         RESETCOLOR();
                     }
@@ -201,3 +206,9 @@ int msleep(long msec)
 
     return res;
 }
+
+/*
+Λ 039B
+Δ 0394
+∀ 2200
+*/
