@@ -1,13 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <termios.h>
-#include <time.h>
-#include <errno.h>
+#include <stdio.h> // standard functions
+#include <stdlib.h> // srand(), rand()
+#include <unistd.h> // sleep()
+#include <pthread.h> // all thread func
+#include <termios.h> // all termios func
+#include <time.h> // time()
+#include <errno.h> // used at msleep() func
 
-#define PLAYING 1
-#define clearScreen() printf("\e[1;1H\e[2J");
+// #define clearScreen() system("clear");
+// #define clearScreen() printf("\e[1;1H\e[2J"), fflush(stdout);
+#define clearScreen() printf("\033[2J\033[1;1H");
 // Text Color Macro
 #define RED(bold) printf("\033[%d;31m", bold);
 #define GREEN(bold) printf("\033[%d;32m", bold);
@@ -17,13 +18,16 @@
 #define CYAN(bold) printf("\033[%d;36m", bold);
 #define RESETCOLOR() printf("\033[0m");
 
-#define MAXWIDTH 47
-#define MAXHEIGHT 23
+#define MAXWIDTH 43
+#define MAXHEIGHT 21
 #define FPS 15
 #define MAXBULLETS 20
 #define SPAWN 0
 #define MOVE 1
 #define BULLET_SPEED 1
+#define MAXENEMIES 10
+#define POINTS 10
+#define ENEMYDAMAGE 5
 // < 68, > 67, a 97, d 100, A 56, D 68
 // Pressed Key Macro
 #define ARROW_LEFT 68
@@ -35,6 +39,11 @@
 
 char input;
 int playerPos;
+int playTime[3];
+int frame;
+int score;
+int highscore;
+int health;
 // Bullet struct
 typedef struct{
     int posX;
@@ -45,6 +54,20 @@ typedef struct{
 bullet bullets[MAXBULLETS];
 // Bullet iterator
 int currentBullet;
+
+// Enemy Struct
+typedef struct{
+    int posX;
+    int posY;
+    int show;
+}enemy;
+
+// Array of Enemies
+enemy enemies[MAXENEMIES];
+// Enemies Iterator
+int currentEnemy;
+// On Sreen Enemy Counter
+int enemyOnScreen;
 
 // Create getch func
 static struct termios old, current;
@@ -63,3 +86,11 @@ void fps(int frame); // frame per second
 void shoot(int mode);
 void update();
 int checkBullet(int x, int y);
+int checkEnemy(int x, int y);
+void *spawnEnemies(void *vargp);
+int getRandom(int min, int max);
+void printTime();
+void startScreen();
+int defeatScreen();
+void setHighScore();
+void resetAllEntity();
