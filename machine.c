@@ -1,4 +1,4 @@
-#include "header.h"
+﻿#include "header.h"
 
 // ((((( BUAT GETCH)))))
 /* Initialize new terminal i/o settings */
@@ -340,16 +340,23 @@ void startScreen()
     char i = '-';
     while(i == '-'){
         system("clear");
-        printf("   _____                    _____ _           _           \n");
-        printf("  |   __|___ ___ ___ ___   |   __| |_ ___ ___| |_ ___ ___ \n");
-        printf("  |__   | . | .'|  _| -_|  |__   |   | . | . |  _| -_|  _|\n");
-        printf("  |_____|  _|__,|___|___|  |_____|_|_|___|___|_| |___|_|  \n");
-        printf("        |_|                                               \n\n");
+        printf("      _______                        \n");  
+		printf("     |   _   .-----.---.-.----.-----.\n");
+		printf("     |   1___|  _  |  _  |  __|  -__|\n");
+		printf("     |____   |   __|___._|____|_____|\n");
+		printf("     |:  1   |__|                    \n");                                
+		printf("     `-------'  						\n");
+		printf(" _______ __                __              \n");                     
+		printf("|   _   |  |--.-----.-----|  |_.-----.----.\n");
+		printf("|   1___|     |  _  |  _  |   _|  -__|   _|\n");													
+		printf("|____   |__|__|_____|_____|____|_____|__|  \n");
+		printf("|:  1   |							       \n");
+		printf("`-------'								   \n");        
         msleep(500);
-        printf("                    +-----------------+                 \n");
-        printf("                       HIGHSCORE %d                     \n", highscore);
-        printf("                    +-----------------+                 \n\n");
-        printf("                   Press any key to start.              \n");
+        printf("            +-----------------+          \n");
+        printf("                HIGHSCORE %d             \n", highscore);
+        printf("            +-----------------+          \n\n");
+        printf("\n         Press any key to start.      \n");
         i = getch();
     }
 }
@@ -357,21 +364,35 @@ void startScreen()
 // Defeat Screen
 int defeatScreen()
 {
-    setHighScore();
-    if(score > highscore) highscore = score;
     char input;
     system("clear");
-    printf("  ______   _______ _______ _______ _______ _______ \n");
-    printf(" |   _  \\ |   _   |   _   |   _   |   _   |       |\n");
-    printf(" |.  |   \55|.  1___|.  1___|.  1___|.  1   |.|   | |\n");
-    printf(" |.  |    |.  __)_|.  __) |.  __)_|.  _   `-|.  |-'\n");
-    printf(" |:  1    |:  1   |:  |   |:  1   |:  |   | |:  |  \n");
-    printf(" |::.. . /|::.. . |::.|   |::.. . |::.|:. | |::.|  \n");
-    printf(" `------' `-------`---'   `-------`--- ---' `---'  \n\n");
-	msleep(500);
-	printf("                 SCORE : %d              \n", score);
+    setHighScore();
+    if(score > highscore)
+    {
+        highscore = score;
+		printf(" __ __  ____    __ ______   ___   ____   __ __ \n");
+		printf("|  T  |l    j  /  ]      T /   \\ |    \\ |  T  T\n");
+		printf("|  |  | |  T  /  /|      |Y     Y|  D  )|  |  |\n");
+		printf("|  |  | |  | /  / l_j  l_j|  O  ||    / |  ~  |\n");
+		printf("l  :  ! |  |/   \\_  |  |  |     ||    \\ l___, |\n");
+		printf(" \\   /  j  l\\     | |  |  l     !|  .  Y|     !\n");
+		printf("  \\_/  |____j\\____j l__j   \\___/ l__j _jl____/ \n\n");
+        printf("                HIGHSCORE UPDATED               \n");
+    }
+    else if(score < highscore)
+    {
+        printf("  ______   _______ _______ _______ _______ _______ \n");
+        printf(" |   _  \\ |   _   |   _   |   _   |   _   |       |\n");
+        printf(" |.  |   \55|.  1___|.  1___|.  1___|.  1   |.|   | |\n");
+        printf(" |.  |    |.  __)_|.  __) |.  __)_|.  _   `-|.  |-'\n");
+        printf(" |:  1    |:  1   |:  |   |:  1   |:  |   | |:  |  \n");
+        printf(" |::.. . /|::.. . |::.|   |::.. . |::.|:. | |::.|  \n");
+        printf(" `------' `-------`---'   `-------`--- ---' `---'  \n\n");
+    }
+    msleep(500);
+    printf("                    SCORE : %d           \n", score);
     printf("               +-----------------+       \n");
-    printf("                 HIGHSCORE %d            \n", highscore);
+    printf("                  HIGHSCORE %d           \n", highscore);
     printf("               +-----------------+       \n\n");
     msleep(500);
     printf("  Press Enter to Try Again or Any Key to Exit\n\n");
