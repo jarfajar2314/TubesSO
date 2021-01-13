@@ -1,5 +1,9 @@
 #include "header.h"
 int main(int argc, char *argv[]){
+    // Backup terminal attribut
+    tcgetattr(0, &old1);
+    // Hide Cursor
+    printf("\e[?25l");
     /*
         A / < dan D / > untuk gerak
         Q untuk quit
@@ -12,9 +16,9 @@ int main(int argc, char *argv[]){
     setHighScore();
     
     // Start Screen
-    startScreen();
+    int start = startScreen();
 
-    while(1)
+    while(start == 1)
     {
         resetAllEntity();
         input = 'X';
@@ -39,8 +43,12 @@ int main(int argc, char *argv[]){
         
         // After exit thread show defeat screen
         int stat = defeatScreen();
-        if(stat == 0) break;
+        if(stat == 0) start = 0;
     }
-
+    printf("\n");
+    // Unhide cursor
+    printf("\e[?25h");
+    // Restore Terminal attribut
+    tcsetattr(0, TCSANOW, &old1);
     return 0;
 }

@@ -30,11 +30,14 @@
 #define ENEMYDAMAGE 5
 // < 68, > 67, a 97, d 100, A 56, D 68
 // Pressed Key Macro
+#define ARROW_UP 65
+#define ARROW_DOWN 66
 #define ARROW_LEFT 68
 #define ARROW_RIGHT 67
 #define K_LEFT 97
 #define K_RIGHT 100
 #define K_SPACE 32
+#define K_ENTER 10
 #define PLAYER 202
 
 char input;
@@ -70,7 +73,7 @@ int currentEnemy;
 int enemyOnScreen;
 
 // Create getch func
-static struct termios old, current;
+static struct termios old, current, old1;
 void initTermios(int echo) ;
 void resetTermios(void);
 char getch_(int echo);
@@ -90,7 +93,8 @@ int checkEnemy(int x, int y);
 void *spawnEnemies(void *vargp);
 int getRandom(int min, int max);
 void printTime();
-void startScreen();
+int startScreen();
 int defeatScreen();
 void setHighScore();
 void resetAllEntity();
+void gotoxy(int x, int y);

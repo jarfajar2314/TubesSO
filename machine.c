@@ -1,4 +1,4 @@
-﻿#include "header.h"
+#include "header.h"
 
 // ((((( BUAT GETCH)))))
 /* Initialize new terminal i/o settings */
@@ -334,11 +334,14 @@ void resetAllEntity()
     }
 }
 
-// Start Screen
-void startScreen()
+void gotoxy(int x, int y)
 {
-    char i = '-';
-    while(i == '-'){
+    printf("%c[%d;%df", 0x1B, y, x);
+}
+
+// Start Screen
+int startScreen()
+{
         system("clear");
         printf("      _______                        \n");  
 		printf("     |   _   .-----.---.-.----.-----.\n");
@@ -356,9 +359,46 @@ void startScreen()
         printf("            +-----------------+          \n");
         printf("                HIGHSCORE %d             \n", highscore);
         printf("            +-----------------+          \n\n");
-        printf("\n         Press any key to start.      \n");
+    int i = 0;
+    int play = 0;
+    int selection = 1;
+    while(play == 0){
+        gotoxy(0, 17);
+        printf("     ");
+        gotoxy(0, 17);
+        if(selection == 1) GREEN(1);
+        printf("                    PLAY                            \n\n");
+        if(selection == 1) RESETCOLOR();
+
+        gotoxy(0, 19);
+        printf("                               ");
+        gotoxy(0, 19);
+        if(selection == 2) GREEN(1);
+        printf("                    QUIT                            \n\n");
+        if(selection == 2) RESETCOLOR();
         i = getch();
+        switch (i)
+        {
+            case ARROW_UP:
+                if(selection == 1) selection = 2;
+                else selection--;
+                break;
+
+            case ARROW_DOWN:
+                if(selection == 2) selection = 1;
+                else selection++;
+                break;
+            case K_ENTER:
+                if(selection == 1) play = 1;
+                else if(selection == 2){
+                    return 0;
+                }
+                break;
+            default:
+                break;
+        }
     }
+    return 1;
 }
 
 // Defeat Screen
@@ -389,16 +429,40 @@ int defeatScreen()
         printf(" |::.. . /|::.. . |::.|   |::.. . |::.|:. | |::.|  \n");
         printf(" `------' `-------`---'   `-------`--- ---' `---'  \n\n");
     }
-    msleep(500);
-    printf("                    SCORE : %d           \n", score);
-    printf("               +-----------------+       \n");
-    printf("                  HIGHSCORE %d           \n", highscore);
-    printf("               +-----------------+       \n\n");
-    msleep(500);
-    printf("  Press Enter to Try Again or Any Key to Exit\n\n");
-    input = getch();
-    if(input == 10) return 1;
-    else return 0;
+        msleep(500);
+        printf("                    SCORE : %d           \n", score);
+        printf("               +-----------------+       \n");
+        printf("                  HIGHSCORE %d           \n", highscore);
+        printf("               +-----------------+       \n\n");
+        msleep(500);
+
+    int slc = 1;
+    while(1){
+        gotoxy(15, 15);
+        if(slc == 1) GREEN(1);
+        printf("Try Again");
+        if(slc == 1) RESETCOLOR();
+        
+        gotoxy(29, 15);
+        if(slc == 2) GREEN(1);
+        printf("Exit");
+        if(slc == 2) RESETCOLOR();
+        input = getch();
+        if(input == ARROW_RIGHT){
+            if(slc == 2) slc = 1;
+            else slc++;
+        }
+        else if(input == ARROW_LEFT){
+            if(slc == 1) slc = 2;
+            else slc--;
+        }
+        else if(input == K_ENTER){
+            if(slc == 1) return 1;
+            else if(slc == 2) return 0;
+        }
+        else{
+        }
+    }
 }
 
 void setHighScore()
@@ -418,9 +482,3 @@ void setHighScore()
         fclose(data);
     }
 }
-
-/*
-Λ 039B
-Δ 0394
-∀ 2200
-*/
