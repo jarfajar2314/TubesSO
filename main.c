@@ -28,6 +28,7 @@ int main(int argc, char *argv[]){
         enemyOnScreen = 0;
         score = 0;
         health = 30;
+        pressQ = 0;
         for(int i = 0; i < 3; i++) playTime[i] = 0;
         frame = 0;
 

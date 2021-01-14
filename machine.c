@@ -52,6 +52,7 @@ void *getInput(void *vargp)
     while(health > 0 && input != 'q')
     {   
         input = getch();
+        if(input == 'q')pressQ = 1;
         control();
         if(input == 'q' || health <= 0)break;
     }
@@ -62,7 +63,7 @@ void *getInput(void *vargp)
 void control()
 {
     // Player Move
-    if(((input == K_LEFT) || (input == ARROW_LEFT)) && (playerPos != 1)) playerPos--;
+    if(((input == K_LEFT) || (input == ARROW_LEFT)) && (playerPos > 2)) playerPos--;
     if(((input == K_RIGHT) || (input == ARROW_RIGHT)) && (playerPos != MAXWIDTH-2)) playerPos++;
 
     // Player Shooting
@@ -106,6 +107,8 @@ void update()
     if(bullets[currentBullet].posY == 0 && bullets[currentBullet].show == 1)
     {
         bullets[currentBullet].show = 0;
+        gotoxy(bullets[currentBullet].posX, 0);
+        printf("\u2550");
     }
 
     // Check if enemy hitted
@@ -174,8 +177,8 @@ void *spawnEnemies(void *vargp)
             currentEnemy++;
             if(currentEnemy == MAXENEMIES) currentEnemy = 0; // MAX Bullet
             srand(time(0));
-            enemies[currentEnemy].posX = getRandom(1, MAXWIDTH-2);
-            enemies[currentEnemy].posY = getRandom(1, 8);
+            enemies[currentEnemy].posX = getRandom(2, MAXWIDTH-2);
+            enemies[currentEnemy].posY = getRandom(2, 8);
             enemies[currentEnemy].show = 1;
         }
         // If user press 'Q' or health lower than 0
@@ -200,70 +203,109 @@ int checkEnemy(int x, int y)
     return check;
 }
 
+// Draw border first
+void drawBorder()
+{
+    clearScreen();
+    for(int i = 0; i < MAXHEIGHT-1; i++)
+    {
+        for(int j = 0; j < MAXWIDTH; j++)
+        {
+            // Print Arena Border
+            if((i == 0 && j == 0) || (i == 0 && j == MAXWIDTH-1) || (i == MAXHEIGHT-2 && j == 0) || (i == MAXHEIGHT-2 && j == MAXWIDTH-1))
+            {
+                if(i == j && i == 0) printf("\u2554"); // ╔
+                else if(i == 0 && j == MAXWIDTH-1) printf("\u2557"); // ╗
+                else if(j == 0 && i == MAXHEIGHT-2) printf("\u255A"); // ╚ 
+                else printf("\u255D"); // ╝
+            }
+            // Print Arena Border
+            else if(i == 0 || i == MAXHEIGHT-2)
+            {
+                printf("\u2550");
+            }
+            // Print Arena Border
+            else if((i > 0 && i < MAXHEIGHT-1) && (j == 0 || j == MAXWIDTH-1))
+            {
+                printf("\u2551");
+            }
+            else
+            {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+}
+
+// Clear the arena
+void clearArena()
+{
+    gotoxy(0, 0);
+    for(int i = 1; i < MAXHEIGHT-2; i++){
+        gotoxy(2, i+1);
+        for(int j = 0; j < MAXWIDTH-2; j++){
+            printf(" ");
+        }
+    }
+    gotoxy(0, 0);
+}
+
 // Print area / windows
 void *drawArea(void *vargp)
 {
+    drawBorder();
     while(1)
     {
-        clearScreen();
+        // clearScreen();
+        clearArena();
+        // gotoxy(0, 0);
         for(int i = 0; i < MAXHEIGHT; i++)
         {
             for(int j = 0; j < MAXWIDTH; j++)
             {
-                // Print Arena Border
-                if((i == 0 && j == 0) || (i == 0 && j == MAXWIDTH-1) || (i == MAXHEIGHT-1 && j == 0) || (i == MAXHEIGHT-1 && j == MAXWIDTH-1))
+                // Print Bullets
+                if(checkBullet(j, i) == 1 && i > 1)
                 {
-                    if(i == j && i == 0) printf("\u2554");
-                    else if(i == 0 && j == MAXWIDTH-1) printf("\u2557");
-                    else if(j == 0 && i == MAXHEIGHT-1) printf("\u255A");
-                    else printf("\u255D");
+                    YELLOW(0);
+                    gotoxy(j, i);
+                    printf("|");
+                    RESETCOLOR();
                 }
-                // Print Arena Border
-                else if(i == 0 || i == MAXHEIGHT-1)
+                // Print Enemies
+                else if(checkEnemy(j, i) == 1 && j > 1 && i > 1)
                 {
-                    printf("\u2550");
+                    RED(1);
+                    gotoxy(j, i);
+                    printf("V");
+                    RESETCOLOR();
                 }
-                // Print Arena Border
-                else if((i > 0 && i < MAXHEIGHT-1) && (j == 0 || j == MAXWIDTH-1))
+                // Print Player
+                else if(i == MAXHEIGHT-2 && (j == playerPos) && j > 1)
                 {
-                    printf("\u2551");
+                    CYAN(0);
+                    gotoxy(j, i);
+                    printf("\u0394");
+                    RESETCOLOR();
                 }
-                else
-                {
-                    // Print Bullet
-                    if(checkBullet(j, i) == 1)
-                    {
-                        YELLOW(0);
-                        printf("|");
-                        RESETCOLOR();
-                    }
-                    // Print Enemy
-                    else if(checkEnemy(j, i) == 1)
-                    {
-                        RED(1);
-                        printf("V");
-                        RESETCOLOR();
-                    }
-                    // Print Player
-                    else if(i == MAXHEIGHT-2 && (j == playerPos))
-                    {
-                        CYAN(0);
-                        printf("\u0394");
-                        RESETCOLOR();
-                    }
-                    // Print blank space
-                    else printf(" ");
-                }
+                gotoxy(0,0);
             }
             // Display Time
-            if(i == 1)printTime();
+            if(i == 1)
+            gotoxy(MAXWIDTH+1, 2),
+            printTime();
             // Display Score
-            if(i == 2)printf("Score : %d", score);
+            if(i == 2)
+            gotoxy(MAXWIDTH+1, 3),
+            printf("Score : %d", score);
             printf("\n");
         }
         // Display Health
+        gotoxy(1, MAXHEIGHT+1);
         printf(" Health : ");
         GREEN(0);
+        printf("                              ");
+        gotoxy(11, MAXHEIGHT+1);
         for(int i = 0; i < health; i++) printf("\u2588");
         RESETCOLOR();
         printf("\n");
@@ -334,6 +376,7 @@ void resetAllEntity()
     }
 }
 
+// Move cursor
 void gotoxy(int x, int y)
 {
     printf("%c[%d;%df", 0x1B, y, x);
@@ -433,11 +476,13 @@ int defeatScreen()
         printf("                    SCORE : %d           \n", score);
         printf("               +-----------------+       \n");
         printf("                  HIGHSCORE %d           \n", highscore);
-        printf("               +-----------------+       \n\n");
+        printf("               +-----------------+       \n");
         msleep(500);
-
+        if(pressQ == 0)
+        printf("             PRESS ENTER TO CONTINUE             \n\n");
     int slc = 1;
     while(1){
+        
         gotoxy(15, 15);
         if(slc == 1) GREEN(1);
         printf("Try Again");

@@ -47,6 +47,7 @@ int frame;
 int score;
 int highscore;
 int health;
+int pressQ;
 // Bullet struct
 typedef struct{
     int posX;
@@ -98,3 +99,5 @@ int defeatScreen();
 void setHighScore();
 void resetAllEntity();
 void gotoxy(int x, int y);
+void drawBorder();
+void clearArena();
